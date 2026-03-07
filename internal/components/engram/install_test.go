@@ -22,12 +22,18 @@ func TestInstallCommandByProfile(t *testing.T) {
 		{
 			name:    "ubuntu uses go install with correct module path",
 			profile: system.PlatformProfile{OS: "linux", LinuxDistro: system.LinuxDistroUbuntu, PackageManager: "apt"},
-			want:    [][]string{{"env", "CGO_ENABLED=0", "go", "install", "github.com/Gentleman-Programming/engram/cmd/engram@latest"}},
+			want: [][]string{
+				{"env", "CGO_ENABLED=0", "go", "install", "github.com/Gentleman-Programming/engram/cmd/engram@latest"},
+				{"sh", "-c", "sudo ln -sf \"$(go env GOPATH | cut -d: -f1)/bin/engram\" /usr/local/bin/engram || echo '\\n\\033[33mWARNING: Could not symlink engram to /usr/local/bin. Please ensure $(go env GOPATH | cut -d: -f1)/bin is in your PATH\\033[0m\\n'"},
+			},
 		},
 		{
 			name:    "arch uses go install with correct module path",
 			profile: system.PlatformProfile{OS: "linux", LinuxDistro: system.LinuxDistroArch, PackageManager: "pacman"},
-			want:    [][]string{{"env", "CGO_ENABLED=0", "go", "install", "github.com/Gentleman-Programming/engram/cmd/engram@latest"}},
+			want: [][]string{
+				{"env", "CGO_ENABLED=0", "go", "install", "github.com/Gentleman-Programming/engram/cmd/engram@latest"},
+				{"sh", "-c", "sudo ln -sf \"$(go env GOPATH | cut -d: -f1)/bin/engram\" /usr/local/bin/engram || echo '\\n\\033[33mWARNING: Could not symlink engram to /usr/local/bin. Please ensure $(go env GOPATH | cut -d: -f1)/bin is in your PATH\\033[0m\\n'"},
+			},
 		},
 		{
 			name:    "unsupported package manager errors",

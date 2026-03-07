@@ -172,13 +172,19 @@ func TestResolveComponentInstall(t *testing.T) {
 			name:      "engram on ubuntu uses go install with correct module path",
 			profile:   system.PlatformProfile{OS: "linux", LinuxDistro: system.LinuxDistroUbuntu, PackageManager: "apt"},
 			component: model.ComponentEngram,
-			want:      CommandSequence{{"env", "CGO_ENABLED=0", "go", "install", "github.com/Gentleman-Programming/engram/cmd/engram@latest"}},
+			want: CommandSequence{
+				{"env", "CGO_ENABLED=0", "go", "install", "github.com/Gentleman-Programming/engram/cmd/engram@latest"},
+				{"sh", "-c", "sudo ln -sf \"$(go env GOPATH | cut -d: -f1)/bin/engram\" /usr/local/bin/engram || echo '\\n\\033[33mWARNING: Could not symlink engram to /usr/local/bin. Please ensure $(go env GOPATH | cut -d: -f1)/bin is in your PATH\\033[0m\\n'"},
+			},
 		},
 		{
 			name:      "engram on arch uses go install with correct module path",
 			profile:   system.PlatformProfile{OS: "linux", LinuxDistro: system.LinuxDistroArch, PackageManager: "pacman"},
 			component: model.ComponentEngram,
-			want:      CommandSequence{{"env", "CGO_ENABLED=0", "go", "install", "github.com/Gentleman-Programming/engram/cmd/engram@latest"}},
+			want: CommandSequence{
+				{"env", "CGO_ENABLED=0", "go", "install", "github.com/Gentleman-Programming/engram/cmd/engram@latest"},
+				{"sh", "-c", "sudo ln -sf \"$(go env GOPATH | cut -d: -f1)/bin/engram\" /usr/local/bin/engram || echo '\\n\\033[33mWARNING: Could not symlink engram to /usr/local/bin. Please ensure $(go env GOPATH | cut -d: -f1)/bin is in your PATH\\033[0m\\n'"},
+			},
 		},
 		{
 			name:      "gga on darwin uses brew tap and install",
